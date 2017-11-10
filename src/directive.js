@@ -8,6 +8,7 @@
  * @requires https://docs.angularjs.org/api/ng/service/$animate $animate
  * @requires https://docs.angularjs.org/api/ng/service/$compile $compile
  * @requires https://docs.angularjs.org/api/ng/service/$window $window
+ * @requires https://docs.angularjs.org/api/ngSanitize/service/$sanitize $sanitize
  * @restrict AE
  * @param {String} [translatePlural] plural form
  * @param {Number} translateN value to watch to substitute correct plural form
@@ -53,7 +54,7 @@
  * <div translate translate-params-cost="cost | currency">This product: {{product}} costs {{cost}}.</div>
  * ```
  */
-angular.module('gettext').directive('translate', function (gettextCatalog, $parse, $animate, $compile, $window, gettextUtil) {
+angular.module('gettext').directive('translate', function (gettextCatalog, $parse, $animate, $compile, $window, gettextUtil, $sanitize) {
     var msie = parseInt((/msie (\d+)/.exec(angular.lowercase($window.navigator.userAgent)) || [])[1], 10);
     var PARAMS_PREFIX = 'translateParams';
 
@@ -127,6 +128,8 @@ angular.module('gettext').directive('translate', function (gettextCatalog, $pars
                             translated = gettextCatalog.getString(msgid, interpolationContext, translateContext);
                         }
                         var oldContents = element.contents();
+
+                        translated = $sanitize(translated);
 
                         if (!oldContents && !translated){
                             return;
